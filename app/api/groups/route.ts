@@ -2,12 +2,12 @@ import { NextResponse } from 'next/server'
 import { connectDB } from '@/lib/db'
 import { Group } from '@/models/Group'
 import { Membership } from '@/models/Membership'
-import { getCurrentUserId } from '@/lib/getCurrentUser'
+import { getUserFromSession } from '@/lib/auth'
 
 export async function POST(req: Request) {
   const body = await req.json()
   const { name, totalAmount, billingDay, totalMembers } = body
-  const userId = await getCurrentUserId()
+  const userId = await getUserFromSession()
 
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     userId: userId,
     role: 'OWNER',
     amount: membershipAmount,
-    status: 'active',
+    status: 'pending',
   })
 
   return NextResponse.json(group)

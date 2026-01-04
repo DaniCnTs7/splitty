@@ -31,7 +31,7 @@ export default function InviteAcceptClient({ token }: { token: string }) {
     <button
       onClick={onAccept}
       disabled={isPending}
-      className='bg-black text-white px-4 py-2 rounded w-full'
+      className='bg-black text-white px-4 py-2 rounded w-full cursor-pointer hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed'
     >
       {session
         ? isPending
