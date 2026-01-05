@@ -26,7 +26,7 @@ export default function NewGroup() {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className='space-y-4 max-w-md w-full'>
+      <form onSubmit={handleSubmit} className='mx-auto space-y-4 max-w-md w-full'>
         <h1 className='text-2xl font-semibold mb-4'>Crear nuevo grupo</h1>
 
         <input

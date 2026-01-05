@@ -7,6 +7,7 @@ const GroupSchema = new Schema(
     totalAmount: { type: Number, required: true },
     billingDay: { type: Number, required: true },
     totalMembers: { type: Number, required: true },
+    stripeConnectAccountId: { type: String, required: true },
   },
   { timestamps: true }
 )

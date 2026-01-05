@@ -11,6 +11,7 @@ const MembershipSchema = new Schema(
       enum: ['pending', 'active', 'past_due', 'canceled'],
       default: 'pending',
     },
+    paymentMethodConfigured: { type: Boolean, default: false },
   },
   { timestamps: true }
 )

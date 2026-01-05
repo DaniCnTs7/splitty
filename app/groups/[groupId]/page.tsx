@@ -1,7 +1,7 @@
 import InviteCreator from '@/app/components/InviteCreator'
 
 async function getGroup(id: string) {
-  const res = await fetch(`${process.env.URL}/api/groups/${id}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/groups/${id}`, {
     cache: 'no-store',
   })
   return res.json()
@@ -19,7 +19,7 @@ export default async function GroupPage({ params }: { params: { groupId: string 
       <ul className='mt-4'>
         {members.map((m: any) => (
           <li key={m._id} className='border border-gray-300 rounded-md p-2 mb-2'>
-            {m.user.name} · {m.amount} € · {m.status}
+            {m.user.email} · {m.amount} € · {m.status}
           </li>
         ))}
       </ul>

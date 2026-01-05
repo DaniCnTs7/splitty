@@ -7,9 +7,9 @@ import { getUserFromSession } from '@/lib/auth'
 export async function POST(req: Request) {
   const body = await req.json()
   const { name, totalAmount, billingDay, totalMembers } = body
-  const userId = await getUserFromSession()
+  const user = await getUserFromSession()
 
-  if (!userId) {
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -20,17 +20,19 @@ export async function POST(req: Request) {
     totalMembers,
     totalAmount,
     billingDay,
-    ownerId: userId,
+    stripeConnectAccountId: user.stripeConnectAccountId,
+    ownerId: user,
   })
 
   const membershipAmount = Number(totalAmount / totalMembers)
 
   await Membership.create({
     groupId: group._id,
-    userId: userId,
+    userId: user,
     role: 'OWNER',
     amount: membershipAmount,
     status: 'pending',
+    paymentMethodConfigured: user.hasPaymentMethod,
   })
 
   return NextResponse.json(group)

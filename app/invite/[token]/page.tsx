@@ -2,7 +2,7 @@ import InviteAcceptClient from '@/app/components/InviteAcceptClient'
 import { notFound } from 'next/navigation'
 
 async function getInvite(token: string) {
-  const res = await fetch(`http://localhost:3000/api/invites/${token}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/invites/${token}`, {
     cache: 'no-store',
   })
 
@@ -13,7 +13,6 @@ async function getInvite(token: string) {
 export default async function InvitePage({ params }: { params: { token: string } }) {
   const { token } = await params
   const data = await getInvite(token)
-  console.log('InvitePage data:', data)
   if (!data) notFound()
 
   const { invite, group } = data

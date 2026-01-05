@@ -1,7 +1,6 @@
 'use client'
 
-import { useSession, signIn } from 'next-auth/react' // ✅ IMPORTA DESDE AQUÍ
-// BORRA esta línea: import { signIn } from '@/auth'
+import { useSession, signIn } from 'next-auth/react'
 import { useTransition } from 'react'
 import { acceptInviteAction } from '../api/invites/[token]/actions'
 
@@ -15,7 +14,6 @@ export default function InviteAcceptClient({ token }: { token: string }) {
 
   function onAccept() {
     if (!session) {
-      // El método de cliente funciona igual pero es seguro para el navegador
       signIn('google', {
         callbackUrl: `/invite/${token}`,
       })

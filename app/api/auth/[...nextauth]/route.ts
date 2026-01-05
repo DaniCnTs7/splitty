@@ -1,2 +1,2 @@
-import { handlers } from '@/auth' // Ajusta la ruta a tu archivo auth.ts
+import { handlers } from '@/auth'
 export const { GET, POST } = handlers
