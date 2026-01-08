@@ -15,6 +15,7 @@ export async function GET(_: Request) {
   const paymentState = {
     canPay: !!user.paymentMethodId,
     canReceive: !!user.stripeConnectAccountId,
+    userId: user.id,
   }
 
   return NextResponse.json(paymentState)

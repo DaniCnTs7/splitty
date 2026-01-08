@@ -16,7 +16,7 @@ export default function PaySubscriptionCard({
     <>
       {!hasCard ? (
         <button
-          className='w-full cursor-pointer border p-2 rounded-md'
+          className='w-full cursor-pointer border p-2 rounded-md bg-amber-300'
           onClick={() => setOpen(true)}
         >
           Añadir tarjeta

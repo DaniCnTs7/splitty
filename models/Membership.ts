@@ -8,9 +8,10 @@ const MembershipSchema = new Schema(
     amount: { type: Number, required: true },
     status: {
       type: String,
-      enum: ['pending', 'active', 'past_due', 'canceled'],
+      enum: ['pending', 'paid', 'failed', 'skipped'],
       default: 'pending',
     },
+    lastPaymentIntentId: String,
     paymentMethodConfigured: { type: Boolean, default: false },
   },
   { timestamps: true }

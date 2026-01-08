@@ -16,12 +16,13 @@ export default function NewGroup() {
       totalMembers: Number(form.totalMembers.value),
     }
 
-    await fetch('/api/groups', {
+    const response = await fetch('/api/groups', {
       method: 'POST',
       body: JSON.stringify(data),
     })
 
-    router.push('/dashboard')
+    if (response.redirected) router.push(response.url)
+    else router.push('/dashboard')
   }
 
   return (

@@ -13,6 +13,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  if (!user.stripeConnectAccountId)
+    return Response.redirect(new URL('/settings', process.env.NEXT_PUBLIC_APP_URL))
+
   await connectDB()
 
   const group = await Group.create({
@@ -21,12 +24,12 @@ export async function POST(req: Request) {
     totalAmount,
     billingDay,
     stripeConnectAccountId: user.stripeConnectAccountId,
-    ownerId: user,
+    owner: user,
   })
 
   const membershipAmount = Number(totalAmount / totalMembers)
 
-  await Membership.create({
+  const membership = await Membership.create({
     groupId: group._id,
     userId: user,
     role: 'OWNER',
@@ -34,6 +37,9 @@ export async function POST(req: Request) {
     status: 'pending',
     paymentMethodConfigured: user.hasPaymentMethod,
   })
+
+  group.members = [membership]
+  await group.save()
 
   return NextResponse.json(group)
 }

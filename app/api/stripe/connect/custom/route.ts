@@ -37,6 +37,7 @@ export async function POST(req: Request) {
     },
     capabilities: {
       transfers: { requested: true },
+      card_payments: { requested: true },
     },
     external_account: {
       object: 'bank_account',

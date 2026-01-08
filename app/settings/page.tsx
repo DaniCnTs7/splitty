@@ -5,14 +5,19 @@ import PaymentStatusCard from '../components/payments/PaymentStatusCard'
 import PaySubscriptionCard from '../components/payments/PaySubscriptionCard'
 import { Elements } from '@stripe/react-stripe-js'
 import { stripePromise } from '@/lib/stripe-client'
+import ConnectOnboarding from '../components/payments/ConnectOnboarding'
+
 export default function PaymentsSettingsPage() {
-  const [paymentState, setPaymentState] = useState({ canPay: false, canReceive: false })
+  const [paymentState, setPaymentState] = useState({
+    canPay: false,
+    canReceive: false,
+    userId: '',
+  })
 
   useEffect(() => {
     async function fetchPaymentState() {
       const res = await fetch('/api/user/payment-state')
       const data = await res.json()
-      console.log({ data })
       setPaymentState(data)
     }
     fetchPaymentState()
@@ -28,14 +33,14 @@ export default function PaymentsSettingsPage() {
       <OwnerCustomForm
         onSuccess={() => setPaymentState({ ...paymentState, canReceive: true })}
       />
-      {
-        <Elements stripe={stripePromise}>
-          <PaySubscriptionCard
-            hasCard={paymentState.canPay}
-            onAddCard={() => setPaymentState({ ...paymentState, canPay: true })}
-          />
-        </Elements>
-      }
+      <Elements stripe={stripePromise}>
+        <PaySubscriptionCard
+          hasCard={paymentState.canPay}
+          onAddCard={() => setPaymentState({ ...paymentState, canPay: true })}
+        />
+      </Elements>
+
+      <ConnectOnboarding userId={paymentState.userId} />
     </div>
   )
 }

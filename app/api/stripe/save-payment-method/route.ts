@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { connectDB } from '@/lib/db'
 import { User } from '@/models/User'
 import { auth } from '@/auth'
+import { Membership } from '@/models/Membership'
 
 export async function POST(req: Request) {
   const session = await auth()
@@ -18,6 +19,10 @@ export async function POST(req: Request) {
 
   user.paymentMethodId = payment_method_id
   await user.save()
+
+  const memberships = await Membership.find({ userId: user.id })
+  memberships.forEach((membership) => (membership.paymentMethodConfigured = true))
+  await Membership.bulkSave(memberships)
 
   return NextResponse.json({ ok: true })
 }

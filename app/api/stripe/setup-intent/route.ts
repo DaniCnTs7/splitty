@@ -18,6 +18,7 @@ export async function POST() {
       metadata: { userId: user.id },
     })
     user.stripeCustomerId = customer.id
+    user.hasPaymentMethod = true
     await user.save()
   }
 

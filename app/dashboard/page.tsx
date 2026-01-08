@@ -3,8 +3,6 @@ import GroupCard from '../components/GroupCard'
 import { fetchGroups } from './actions'
 
 export default async function Dashboard() {
-  await auth()
-
   const groups = await fetchGroups()
 
   if (!groups || !Array.isArray(groups) || groups.length === 0) {

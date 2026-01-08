@@ -1,4 +1,5 @@
 import InviteCreator from '@/app/components/InviteCreator'
+import { redirect } from 'next/navigation'
 
 async function getGroup(id: string) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/groups/${id}`, {
@@ -11,6 +12,8 @@ export default async function GroupPage({ params }: { params: { groupId: string 
   const { groupId } = await params
   const { group, members } = await getGroup(groupId)
 
+  if (!group) redirect('/dashboard')
+
   return (
     <>
       <h1 className='text-2xl mb-2'>{group.name}</h1>
@@ -19,7 +22,7 @@ export default async function GroupPage({ params }: { params: { groupId: string 
       <ul className='mt-4'>
         {members.map((m: any) => (
           <li key={m._id} className='border border-gray-300 rounded-md p-2 mb-2'>
-            {m.user.email} · {m.amount} € · {m.status}
+            {m.user.email} · {m.amount} € {m.role !== 'OWNER' && `· ${m.status}`}
           </li>
         ))}
       </ul>

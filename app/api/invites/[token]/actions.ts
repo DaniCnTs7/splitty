@@ -2,8 +2,10 @@
 
 import { auth } from '@/auth'
 import { connectDB } from '@/lib/db'
+import { Group } from '@/models/Group'
 import { Invite } from '@/models/Invite'
 import { Membership } from '@/models/Membership'
+import { User } from '@/models/User'
 import { redirect } from 'next/navigation'
 
 export async function acceptInviteAction(token: string) {
@@ -21,13 +23,21 @@ export async function acceptInviteAction(token: string) {
     throw new Error('Invite inválida o ya aceptada')
   }
 
-  await Membership.create({
+  const user = await User.findOne({ email: session.user.email })
+
+  const membership = await Membership.create({
     groupId: invite.groupId,
     userId: session.user.id,
     role: 'MEMBER',
     amount: invite.amount,
     status: 'pending',
+    paymentMethodConfigured:
+      user.hasPaymentMethod || user.stripeCustomerId || user.stripeConnectAccountId,
   })
+
+  const group = await Group.findById(invite.groupId)
+  group.members.push(membership)
+  await group.save()
 
   invite.acceptedAt = new Date()
   await invite.save()

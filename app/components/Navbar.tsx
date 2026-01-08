@@ -5,7 +5,7 @@ import AuthButton from './AuthButton'
 
 export default function Navbar() {
   return (
-    <nav className='flex items-center justify-between p-4 border-b'>
+    <nav className='flex items-center justify-around p-4 border-b'>
       <Link href='/' className='font-bold text-lg'>
         Splitty
       </Link>
