@@ -1,4 +1,4 @@
-import { User } from '@/models/User'
+import { User } from '@/lib/db/models/User'
 import { auth } from '@/auth'
 
 export async function getUserFromSession() {

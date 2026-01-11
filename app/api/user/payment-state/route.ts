@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import { connectDB } from '@/lib/db'
-import { User } from '@/models/User'
+import connectDB from '@/lib/db/mongoose'
+import { User } from '@/lib/db/models/User'
 import { auth } from '@/auth'
 
 export async function GET(_: Request) {
@@ -13,9 +13,8 @@ export async function GET(_: Request) {
   if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
   const paymentState = {
-    canPay: !!user.paymentMethodId,
-    canReceive: !!user.stripeConnectAccountId,
-    userId: user.id,
+    canPay: !!user.defaultPaymentMethodId,
+    canReceive: !!user.payoutPaymentMethodId,
   }
 
   return NextResponse.json(paymentState)

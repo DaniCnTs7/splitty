@@ -9,7 +9,7 @@ export default function GroupCard({ group }: any) {
     >
       <h2 className='font-medium'>{group.name}</h2>
       <p className='text-sm text-gray-500'>
-        {group.totalMembers} miembros · {group.totalAmount} €/mes
+        {group.maxMembers} miembros · {group.totalAmount} €/mes
       </p>
     </Link>
   )

@@ -1,12 +1,11 @@
 'use server'
 
 import { auth } from '@/auth'
-import { connectDB } from '@/lib/db'
-import { Group } from '@/models/Group'
-import { Invite } from '@/models/Invite'
-import { Membership } from '@/models/Membership'
-import { User } from '@/models/User'
+import connectDB from '@/lib/db/mongoose'
+import { Invite } from '@/lib/db/models/Invite'
 import { redirect } from 'next/navigation'
+import { GroupMember } from '@/lib/db/models/GroupMember'
+import { Group } from '@/lib/db/models/Group'
 
 export async function acceptInviteAction(token: string) {
   const session = await auth()
@@ -23,24 +22,25 @@ export async function acceptInviteAction(token: string) {
     throw new Error('Invite inválida o ya aceptada')
   }
 
-  const user = await User.findOne({ email: session.user.email })
-
-  const membership = await Membership.create({
+  await GroupMember.create({
     groupId: invite.groupId,
     userId: session.user.id,
     role: 'MEMBER',
-    amount: invite.amount,
-    status: 'pending',
-    paymentMethodConfigured:
-      user.hasPaymentMethod || user.stripeCustomerId || user.stripeConnectAccountId,
   })
-
-  const group = await Group.findById(invite.groupId)
-  group.members.push(membership)
-  await group.save()
 
   invite.acceptedAt = new Date()
   await invite.save()
+
+  const group = await Group.findById(invite.groupId)
+
+  if (!group) throw new Error('Grupo no encontrado')
+
+  const members = await GroupMember.find({ groupId: invite.groupId })
+
+  if (members?.length === group.maxMembers) {
+    group.status = 'ACTIVE'
+    await group.save()
+  }
 
   redirect('/dashboard')
 }

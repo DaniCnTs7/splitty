@@ -4,9 +4,11 @@ import AddCardForm from './AddCardForm'
 export default function AddCardModal({
   onClose,
   onSuccess,
+  isToReceivePayments,
 }: {
   onClose: () => void
   onSuccess: () => void
+  isToReceivePayments: boolean
 }) {
   return (
     <div className='fixed inset-0 bg-black/40 flex items-center justify-center z-50'>
@@ -14,6 +16,7 @@ export default function AddCardModal({
         <h3 className='text-lg font-medium'>Añadir tarjeta</h3>
 
         <AddCardForm
+          isToReceivePayments={isToReceivePayments}
           onSuccess={() => {
             onSuccess()
             onClose()

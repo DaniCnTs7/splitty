@@ -1,45 +1,28 @@
+import { withAuth } from '@/lib/with-auth'
+import { Group } from '@/lib/db/models/Group'
+import { GroupMember } from '@/lib/db/models/GroupMember'
 import { NextResponse } from 'next/server'
-import { connectDB } from '@/lib/db'
-import { Group } from '@/models/Group'
-import { Membership } from '@/models/Membership'
-import { getUserFromSession } from '@/lib/auth'
 
-export async function POST(req: Request) {
+export const POST = withAuth(async (req, { session }) => {
   const body = await req.json()
-  const { name, totalAmount, billingDay, totalMembers } = body
-  const user = await getUserFromSession()
+  const { name, totalAmount, billingDay, maxMembers } = body
+  console.log(maxMembers)
+  try {
+    const group = await Group.create({
+      name,
+      totalAmount,
+      billingDay,
+      maxMembers,
+      ownerId: session.user.id,
+    })
 
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    await GroupMember.create({
+      groupId: group._id,
+      userId: session.user.id,
+      role: 'OWNER',
+    })
+    return NextResponse.json(group)
+  } catch (error: any) {
+    return NextResponse.json({ error })
   }
-
-  if (!user.stripeConnectAccountId)
-    return Response.redirect(new URL('/settings', process.env.NEXT_PUBLIC_APP_URL))
-
-  await connectDB()
-
-  const group = await Group.create({
-    name,
-    totalMembers,
-    totalAmount,
-    billingDay,
-    stripeConnectAccountId: user.stripeConnectAccountId,
-    owner: user,
-  })
-
-  const membershipAmount = Number(totalAmount / totalMembers)
-
-  const membership = await Membership.create({
-    groupId: group._id,
-    userId: user,
-    role: 'OWNER',
-    amount: membershipAmount,
-    status: 'pending',
-    paymentMethodConfigured: user.hasPaymentMethod,
-  })
-
-  group.members = [membership]
-  await group.save()
-
-  return NextResponse.json(group)
-}
+})

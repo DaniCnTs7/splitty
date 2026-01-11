@@ -3,19 +3,28 @@
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { useState } from 'react'
 
-export default function AddCardForm({ onSuccess }: { onSuccess: () => void }) {
+export default function AddCardForm({
+  onSuccess,
+  isToReceivePayments,
+}: {
+  onSuccess: () => void
+  isToReceivePayments: boolean
+}) {
   const stripe = useStripe()
   const elements = useElements()
   const [loading, setLoading] = useState(false)
 
-  if (!stripe || !elements) return null // ⚡ evita error de null
+  if (!stripe || !elements) return null
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
     try {
-      const res = await fetch('/api/stripe/setup-intent', { method: 'POST' })
+      const apiUrl = isToReceivePayments
+        ? '/api/payment-method/owner'
+        : '/api/payment-method/member'
+      const res = await fetch(apiUrl, { method: 'POST' })
       const { clientSecret } = await res.json()
 
       const card = elements.getElement(CardElement)
@@ -33,14 +42,18 @@ export default function AddCardForm({ onSuccess }: { onSuccess: () => void }) {
         return
       }
 
-      const saveRes = await fetch('/api/stripe/save-payment-method', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ payment_method_id: result.setupIntent?.payment_method }),
-      })
+      const { setupIntent } = result
+      const paymentMethodId = setupIntent.payment_method
 
-      const saveData = await saveRes.json()
-      if (!saveData.ok) throw new Error(saveData.error || 'Error guardando el payment method')
+      await fetch(apiUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          paymentMethodId,
+        }),
+      })
 
       setLoading(false)
       onSuccess()

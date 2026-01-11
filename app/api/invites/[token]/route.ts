@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
-import { connectDB } from '@/lib/db'
-import { Invite } from '@/models/Invite'
-import { Group } from '@/models/Group'
+import connectDB from '@/lib/db/mongoose'
+import { Invite } from '@/lib/db/models/Invite'
+import { Group } from '@/lib/db/models/Group'
 
 export async function GET(_: Request, { params }: { params: { token: string } }) {
   await connectDB()

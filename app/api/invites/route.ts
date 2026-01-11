@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { randomUUID } from 'crypto'
-import { connectDB } from '@/lib/db'
-import { Invite } from '@/models/Invite'
+import connectDB from '@/lib/db/mongoose'
+import { Invite } from '@/lib/db/models/Invite'
 
 export async function POST(req: Request) {
   const { groupId, amount } = await req.json()
